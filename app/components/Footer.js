@@ -1,35 +1,53 @@
 'use client';
-import { useEffect } from 'react';
+import { useEffect } from "react";
 
 export default function Footer() {
+  useEffect(() => {
+    import('bootstrap/dist/js/bootstrap.bundle.min.js');
+  }, []);
+
   return (
-    <footer className="bg-[#1e1e1e] text-gray-400 px-6 py-10 mt-12">
-      <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-start gap-8">
-        
-        {/* Logo / Brand */}
-        <div>
-          <h2 className="text-black text-2xl font-bold"></h2>
-          <p className="text-sm mt-2">My Footer</p>
+    <footer className="bg-dark text-light py-5 mt-auto">
+      <div className="container">
+        <div className="row text-center text-md-start">
+
+          {/* เมนู */}
+          <div className="col-md-4 mb-4">
+            <h5 className="fw-semibold mb-3">เมนู</h5>
+            <ul className="list-unstyled">
+              <li><a href="/" className="text-light text-decoration-none d-block mb-2">หน้าแรก</a></li>
+              <li><a href="/about" className="text-light text-decoration-none d-block mb-2">เกี่ยวกับเรา</a></li>
+              <li><a href="/contact" className="text-light text-decoration-none d-block">ติดต่อ</a></li>
+            </ul>
+          </div>
+
+          {/* ติดต่อ */}
+          <div className="col-md-4 mb-4">
+            <h5 className="fw-semibold mb-3">ติดต่อเรา</h5>
+            <p className="mb-1">โทร: 080-000-0000</p>
+            <p className="mb-3">อีเมล: Pattarasai@gmail.com</p>
+            <div className="d-flex justify-content-center justify-content-md-start gap-3">
+              <a href="#" className="text-light fs-5"><i className="bi bi-facebook"></i></a>
+              <a href="#" className="text-light fs-5"><i className="bi bi-instagram"></i></a>
+              <a href="#" className="text-light fs-5"><i className="bi bi-twitter"></i></a>
+            </div>
+          </div>
+
+          {/* โลโก้ หรือ คำอธิบาย */}
+          <div className="col-md-4 mb-4">
+            <h5 className="fw-semibold mb-3">Pattarasai 037</h5>
+            <p className="small">
+              เว็บไซต์ตัวอย่างสำหรับนำเสนอข้อมูลส่วนตัว และผลงานของ Pattarasai
+            </p>
+          </div>
         </div>
 
-        {/* Navigation Links */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 gap-6 text-sm">
-          <div className="space-y-2">
-            <a href="/about" className="hover:text-white transition">About</a><br />
-            <a href="/contact" className="hover:text-white transition">Contact</a>
-          </div>
-          <div className="space-y-2">
-            <a href="/service" className="hover:text-white transition">Services</a><br />
-            <a href="/privacy" className="hover:text-white transition">Privacy</a>
-          </div>
-        </div>
-      </div>
+        <hr className="border-secondary my-4" />
 
-      {/* Bottom Section */}
-      <div className="border-t border-gray-700 mt-10 pt-6 text-center text-sm text-gray-500">
-        © {new Date().getFullYear()} Pattarasai Jaipong. All rights reserved.
+        <div className="text-center small">
+          &copy; {new Date().getFullYear()} Pattarasai. All rights reserved.
+        </div>
       </div>
     </footer>
   );
 }
-
