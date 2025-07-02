@@ -1,6 +1,7 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import Navigation from "./components/Navigation"
+import Footer from "./components/Footer"
 
 export const metadata = {
   title: "Create Next App",
@@ -10,13 +11,14 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body
-        className={` antialiased`}
-      >
-        <Navigation></Navigation>
+      <body className="antialiased">
+        <Navigation />
+        <main>{children}</main>
 
-        {children}
+        <Footer />     
+
       </body>
     </html>
   );
 }
+
