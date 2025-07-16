@@ -1,58 +1,201 @@
 'use client';
+
+import { useState } from 'react';
+
+const style = {
+  container: {
+    minHeight: '100vh',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: '3rem 1.5rem',
+    background: 'linear-gradient(to right, #a7f3d0, #6ee7b7, #34d399)', // teal/green gradients
+  },
+  card: {
+    backgroundColor: 'white',
+    padding: '2.5rem',
+    borderRadius: '2rem',
+    boxShadow:
+      '0 25px 50px -12px rgba(52, 211, 153, 0.25)', // green shadow
+    width: '100%',
+    maxWidth: '24rem', // max-w-md ~ 384px
+    border: '2px solid #4ade80', // green-400
+    textAlign: 'center',
+  },
+  heading: {
+    fontSize: '1.875rem',
+    fontWeight: '800',
+    color: '#047857', // green-700
+    marginBottom: '1rem',
+    textShadow: '0 1px 2px rgba(0,0,0,0.1)',
+  },
+  subtitle: {
+    color: '#4b5563', // gray-700 (neutral for subtitle)
+    marginBottom: '2rem',
+    fontSize: '0.875rem',
+  },
+  formGroup: {
+    marginBottom: '1.25rem',
+    textAlign: 'left',
+  },
+  label: {
+    display: 'block',
+    fontSize: '0.875rem',
+    fontWeight: '500',
+    color: '#065f46', // green-800
+    marginBottom: '0.25rem',
+  },
+  input: {
+    width: '100%',
+    padding: '0.5rem 1rem',
+    fontSize: '1rem',
+    border: '1px solid #d1d5db', // gray-300
+    borderRadius: '0.5rem',
+    outline: 'none',
+    transition: 'box-shadow 0.2s ease, border-color 0.2s ease',
+  },
+  inputFocusGreen: {
+    borderColor: '#34d399', // green-400
+    boxShadow: '0 0 0 2px #34d399',
+  },
+  checkboxContainer: {
+    display: 'flex',
+    alignItems: 'center',
+    marginBottom: '1.5rem',
+    justifyContent: 'flex-start',
+  },
+  checkbox: {
+    marginRight: '0.5rem',
+    accentColor: '#22c55e', // green-500
+    cursor: 'pointer',
+  },
+  checkboxLabel: {
+    fontSize: '0.875rem',
+    color: '#065f46', // green-800
+  },
+  button: {
+    width: '100%',
+    background:
+      'linear-gradient(to right, #22c55e, #16a34a)', // green-500 to green-600
+    padding: '0.5rem 0',
+    borderRadius: '0.5rem',
+    color: 'white',
+    fontWeight: '600',
+    fontSize: '1.125rem',
+    boxShadow: '0 4px 6px rgba(34, 197, 94, 0.4)',
+    cursor: 'pointer',
+    border: 'none',
+    transition: 'opacity 0.2s ease, box-shadow 0.2s ease',
+  },
+  buttonHover: {
+    opacity: 0.9,
+    boxShadow: '0 6px 10px rgba(34, 197, 94, 0.7)',
+  },
+  linksContainer: {
+    marginTop: '1.5rem',
+    display: 'flex',
+    justifyContent: 'space-between',
+    fontSize: '0.875rem',
+    color: '#15803d', // green-700
+  },
+  link: {
+    textDecoration: 'none',
+    cursor: 'pointer',
+  },
+};
+
 export default function Login() {
+  const [btnHover, setBtnHover] = useState(false);
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [remember, setRemember] = useState(false);
+
   return (
-    <div className="w-screen min-h-screen flex items-center justify-center bg-gradient-to-r from-indigo-200 via-purple-200 to-pink-200 px-6 py-12">
-      <div className="bg-white p-10 rounded-3xl shadow-2xl w-full max-w-md border-2 border-indigo-300 text-center">
-        <h1 className="text-3xl font-extrabold text-indigo-700 mb-4 drop-shadow-sm">
+    <div style={style.container}>
+      <div style={style.card}>
+        <h1 style={style.heading}>
           ยินดีต้อนรับนะครับอิอิ คุคิคุคิ จุ๊บุจุ๊บุ
         </h1>
-        <p className="text-gray-500 mb-8 text-sm">
-          กรุณาเข้าสู่ระบบเพื่อใช้งานระบบของเรา
-        </p>
+        <p style={style.subtitle}>กรุณาเข้าสู่ระบบเพื่อใช้งานระบบของเรา</p>
 
         {/* Username */}
-        <div className="mb-5 text-left">
-          <label htmlFor="username" className="block text-sm font-medium text-gray-700 mb-1">
+        <div style={style.formGroup}>
+          <label htmlFor="username" style={style.label}>
             👤 Username
           </label>
           <input
             id="username"
             type="text"
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-indigo-400 transition"
             placeholder="ชื่อผู้ใช้"
+            style={style.input}
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+            onFocus={(e) => (e.target.style = { ...style.input, ...style.inputFocusGreen })}
+            onBlur={(e) => (e.target.style = style.input)}
           />
         </div>
 
         {/* Password */}
-        <div className="mb-5 text-left">
-          <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
+        <div style={style.formGroup}>
+          <label htmlFor="password" style={style.label}>
             🔒 Password
           </label>
           <input
             id="password"
             type="password"
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-400 focus:border-pink-400 transition"
             placeholder="รหัสผ่าน"
+            style={style.input}
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            onFocus={(e) => (e.target.style = { ...style.input, ...style.inputFocusGreen })}
+            onBlur={(e) => (e.target.style = style.input)}
           />
         </div>
 
         {/* Remember Me */}
-        <div className="flex items-center justify-start mb-6">
-          <input id="remember" type="checkbox" className="mr-2 accent-purple-500" />
-          <label htmlFor="remember" className="text-sm text-gray-700">จำฉันไว้</label>
+        <div style={style.checkboxContainer}>
+          <input
+            id="remember"
+            type="checkbox"
+            style={style.checkbox}
+            checked={remember}
+            onChange={() => setRemember(!remember)}
+          />
+          <label htmlFor="remember" style={style.checkboxLabel}>
+            จำฉันไว้
+          </label>
         </div>
 
         {/* Login Button */}
-        <button className="w-full bg-gradient-to-r from-indigo-500 to-purple-500 text- py-2 rounded-lg text-lg font-semibold shadow-md hover:shadow-lg hover:opacity-90 transition-all duration-200">
+        <button
+          type="submit"
+          style={{ ...style.button, ...(btnHover ? style.buttonHover : {}) }}
+          onMouseEnter={() => setBtnHover(true)}
+          onMouseLeave={() => setBtnHover(false)}
+          onClick={() => alert('เข้าสู่ระบบเรียบร้อย 🎉')}
+        >
           🔓 Login
         </button>
 
         {/* Links */}
-        <div className="mt-6 flex justify-between text-sm text-purple-700">
-          <a href="/register" className="hover:underline">สมัครสมาชิก</a>
-          <a href="/forgot-password" className="hover:underline">ลืมรหัสผ่าน</a>
+        <div style={style.linksContainer}>
+          <a
+            href="/register"
+            style={style.link}
+            onMouseEnter={(e) => (e.target.style.textDecoration = 'underline')}
+            onMouseLeave={(e) => (e.target.style.textDecoration = 'none')}
+          >
+            สมัครสมาชิก
+          </a>
+          <a
+            href="/forgot-password"
+            style={style.link}
+            onMouseEnter={(e) => (e.target.style.textDecoration = 'underline')}
+            onMouseLeave={(e) => (e.target.style.textDecoration = 'none')}
+          >
+            ลืมรหัสผ่าน
+          </a>
         </div>
-        <p></p>
       </div>
     </div>
   );

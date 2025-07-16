@@ -1,6 +1,115 @@
 'use client';
 import { useState } from 'react';
 
+const style = {
+  container: {
+    minHeight: '100vh',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: '3rem 1rem',
+    background: 'linear-gradient(to right, #34d399, #6ee7b7, #a7f3d0)', // Emerald 400 -> 300 -> 200 (เขียวอ่อนไล่โทน)
+  },
+  form: {
+    backgroundColor: 'white',
+    width: '100%',
+    maxWidth: '48rem',
+    padding: '2.5rem',
+    borderRadius: '2rem',
+    boxShadow: '0 10px 15px -3px rgba(52, 211, 153, 0.4), 0 4px 6px -2px rgba(52, 211, 153, 0.05)', // Emerald 400 shadow
+  },
+  heading: {
+    fontSize: '2.5rem',
+    fontWeight: '800',
+    textAlign: 'center',
+    color: '#065f46', // Emerald 900 (เข้ม)
+    marginBottom: '0.75rem',
+    textShadow: '0 1px 2px rgba(0,0,0,0.1)',
+  },
+  subtitle: {
+    textAlign: 'center',
+    color: '#166534', // Emerald 800
+    marginBottom: '2rem',
+    fontSize: '0.875rem',
+  },
+  gridContainer: {
+    display: 'grid',
+    gap: '1.5rem',
+    gridTemplateColumns: 'repeat(auto-fit, minmax(15rem, 1fr))',
+  },
+  label: {
+    display: 'block',
+    fontWeight: '600',
+    fontSize: '0.875rem',
+    marginBottom: '0.25rem',
+    color: '#14532d', // Emerald 800
+  },
+  input: {
+    width: '100%',
+    padding: '0.5rem 1rem',
+    border: '1px solid #d1d5db',
+    borderRadius: '0.5rem',
+    fontSize: '1rem',
+    outline: 'none',
+    transition: 'box-shadow 0.2s ease',
+  },
+  textarea: {
+    width: '100%',
+    padding: '0.5rem 1rem',
+    border: '1px solid #d1d5db',
+    borderRadius: '0.5rem',
+    fontSize: '1rem',
+    outline: 'none',
+    resize: 'vertical',
+  },
+  radioContainer: {
+    display: 'flex',
+    gap: '1.5rem',
+    marginTop: '0.25rem',
+  },
+  radioLabel: {
+    display: 'flex',
+    alignItems: 'center',
+    fontSize: '0.875rem',
+    color: '#4b5563',
+    cursor: 'pointer',
+  },
+  checkboxContainer: {
+    marginTop: '1.5rem',
+    display: 'flex',
+    alignItems: 'center',
+  },
+  checkbox: {
+    marginRight: '0.5rem',
+    accentColor: '#10b981', // Emerald 500
+    cursor: 'pointer',
+  },
+  submitButton: {
+    marginTop: '2rem',
+    width: '100%',
+    padding: '0.75rem 0',
+    background: 'linear-gradient(to right, #059669, #10b981)', // Emerald 600 -> Emerald 500
+    color: 'white',
+    fontWeight: 'bold',
+    fontSize: '1.125rem',
+    borderRadius: '1rem',
+    boxShadow: '0 10px 15px -3px rgba(16, 185, 129, 0.7)', // Emerald 500 shadow
+    cursor: 'pointer',
+    transition: 'opacity 0.2s ease, box-shadow 0.2s ease',
+    border: 'none',
+  },
+  submitButtonHover: {
+    opacity: 0.9,
+    boxShadow: '0 12px 20px -5px rgba(16, 185, 129, 0.9)',
+  },
+  submitButtonDisabled: {
+    background: '#6ee7b7', // Emerald 300 อ่อนลง
+    cursor: 'not-allowed',
+    boxShadow: 'none',
+    opacity: 0.6,
+  },
+};
+
 export default function Register() {
   const [form, setForm] = useState({
     username: '',
@@ -14,6 +123,8 @@ export default function Register() {
     accepted: false,
   });
 
+  const [btnHover, setBtnHover] = useState(false);
+
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
     setForm({
@@ -24,57 +135,56 @@ export default function Register() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    if (!form.accepted) return;
     alert('🎉 สมัครสมาชิกสำเร็จ!');
   };
 
-  return (
-    <div className="w-screen min-h-screen flex items-center justify-center bg-gradient-to-r from-indigo-300 via-purple-200 to-pink-300 px-4 py-12">
-      <form
-        onSubmit={handleSubmit}
-        className="bg-white w-full max-w-3xl p-10 rounded-3xl custom-form-shadow"
-      >
-        <h1 className="text-4xl font-extrabold text-center text-black mb-3 drop-shadow-sm">
-          📝 สมัครสมาชิก
-        </h1>
-        <p className="text-center text-gray-800 mb-8 text-sm">
-          กรอกข้อมูลให้ครบถ้วนเพื่อสร้างบัญชีของคุณ
-        </p>
+  const isSubmitDisabled = !form.accepted;
 
-        <div className="grid md:grid-cols-2 gap-6">
-          {/* Username */}
+  return (
+    <div style={style.container}>
+      <form onSubmit={handleSubmit} style={style.form}>
+        <h1 style={style.heading}> สมัครสมาชิก</h1>
+        <p style={style.subtitle}>กรอกข้อมูลให้ครบถ้วนเพื่อสร้างบัญชีของคุณ</p>
+
+        <div style={style.gridContainer}>
           <div>
-            <label className="block text-sm font-semibold text-gray-800 mb-1">👤 ชื่อผู้ใช้</label>
+            <label htmlFor="username" style={style.label}>👤 ชื่อผู้ใช้</label>
             <input
+              id="username"
               name="username"
               type="text"
               value={form.username}
               onChange={handleChange}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-400 transition"
               placeholder="ชื่อผู้ใช้"
+              style={style.input}
+              required
             />
           </div>
 
-          {/* Password */}
           <div>
-            <label className="block text-sm font-semibold text-gray-800 mb-1">🔒 รหัสผ่าน</label>
+            <label htmlFor="password" style={style.label}>🔒 รหัสผ่าน</label>
             <input
+              id="password"
               name="password"
               type="password"
               value={form.password}
               onChange={handleChange}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-400 transition"
               placeholder="รหัสผ่าน"
+              style={style.input}
+              required
             />
           </div>
 
-          {/* Prefix */}
           <div>
-            <label className="block text-sm font-semibold text-gray-800 mb-1">🧑‍🏫 คำนำหน้า</label>
+            <label htmlFor="prefix" style={style.label}>คำนำหน้า</label>
             <select
+              id="prefix"
               name="prefix"
               value={form.prefix}
               onChange={handleChange}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+              style={style.input}
+              required
             >
               <option value="">-- เลือก --</option>
               <option value="นาย">นาย</option>
@@ -83,137 +193,119 @@ export default function Register() {
             </select>
           </div>
 
-          {/* Birthdate */}
           <div>
-            <label className="block text-sm font-semibold text-gray-800 mb-1">🎂 วันเกิด</label>
+            <label htmlFor="birthdate" style={style.label}>🎂 วันเกิด</label>
             <input
+              id="birthdate"
               name="birthdate"
               type="date"
               value={form.birthdate}
               onChange={handleChange}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+              style={style.input}
+              required
             />
           </div>
 
-          {/* First Name */}
           <div>
-            <label className="block text-sm font-semibold text-gray-800 mb-1">ชื่อ</label>
+            <label htmlFor="firstName" style={style.label}>ชื่อ</label>
             <input
+              id="firstName"
               name="firstName"
               type="text"
               value={form.firstName}
               onChange={handleChange}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg"
               placeholder="ชื่อจริง"
+              style={style.input}
+              required
             />
           </div>
 
-          {/* Last Name */}
           <div>
-            <label className="block text-sm font-semibold text-gray-800 mb-1">นามสกุล</label>
+            <label htmlFor="lastName" style={style.label}>นามสกุล</label>
             <input
+              id="lastName"
               name="lastName"
               type="text"
               value={form.lastName}
               onChange={handleChange}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg"
               placeholder="นามสกุล"
+              style={style.input}
+              required
             />
           </div>
         </div>
 
-        {/* Address */}
-        <div className="mt-6">
-          <label className="block text-sm font-semibold text-gray-800 mb-1">🏠 ที่อยู่</label>
+        <div style={{ marginTop: '1.5rem' }}>
+          <label htmlFor="address" style={style.label}>🏠 ที่อยู่</label>
           <textarea
+            id="address"
             name="address"
             rows="3"
             value={form.address}
             onChange={handleChange}
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg"
             placeholder="บ้านเลขที่ / แขวง / เขต / จังหวัด"
+            style={style.textarea}
+            required
           />
         </div>
 
-        {/* Gender */}
-        <div className="mt-6">
-          <label className="block text-sm font-semibold text-gray-800 mb-1">⚧️ เพศ</label>
-          <div className="flex items-center gap-6 mt-1">
-            <label className="flex items-center text-sm text-gray-700">
+        <div style={{ marginTop: '1.5rem' }}>
+          <label style={style.label}>เพศ</label>
+          <div style={style.radioContainer}>
+            <label style={style.radioLabel}>
               <input
                 type="radio"
                 name="gender"
                 value="ชาย"
                 checked={form.gender === 'ชาย'}
                 onChange={handleChange}
-                className="mr-2"
+                style={{ marginRight: '0.5rem' }}
+                required
               />
               ชาย
             </label>
-            <label className="flex items-center text-sm text-gray-700">
+            <label style={style.radioLabel}>
               <input
                 type="radio"
                 name="gender"
                 value="หญิง"
                 checked={form.gender === 'หญิง'}
                 onChange={handleChange}
-                className="mr-2"
+                style={{ marginRight: '0.5rem' }}
               />
               หญิง
             </label>
           </div>
         </div>
 
-        {/* Accept */}
-        <div className="mt-6 flex items-center">
+        <div style={style.checkboxContainer}>
           <input
             type="checkbox"
             name="accepted"
             checked={form.accepted}
             onChange={handleChange}
-            className="mr-2 accent-purple-500"
+            style={style.checkbox}
+            required
           />
-          <label className="text-sm text-gray-800">ฉันยอมรับเงื่อนไขและข้อตกลง</label>
+          <label style={{ fontSize: '0.875rem', color: '#374151' }}>
+            ฉันยอมรับเงื่อนไขและข้อตกลง
+          </label>
         </div>
 
-        {/* Submit Button */}
         <button
           type="submit"
-          className="mt-8 w-full bg-gradient-to-r from-indigo-500 to-purple-500 text-white py-3 rounded-xl font-bold shadow-lg hover:shadow-xl hover:opacity-90 transition-all duration-200"
+          style={{
+            ...style.submitButton,
+            ...(btnHover && !isSubmitDisabled ? style.submitButtonHover : {}),
+            ...(isSubmitDisabled ? style.submitButtonDisabled : {}),
+          }}
+          onMouseEnter={() => setBtnHover(true)}
+          onMouseLeave={() => setBtnHover(false)}
+          disabled={isSubmitDisabled}
+          title={isSubmitDisabled ? 'กรุณายอมรับเงื่อนไขก่อนสมัคร' : ''}
         >
-          ✅ สมัครสมาชิก
+          สมัครสมาชิก
         </button>
-
-        {/* Global Style เฉพาะหน้านี้ */}
-        <style jsx global>{`
-          body {
-            font-family: 'Kanit', sans-serif;
-            background-color: #f3e8ff;
-          }
-
-          ::placeholder {
-            color: #6b7280; /* gray-600 */
-            opacity: 1;
-          }
-
-          input, select, textarea {
-            font-family: inherit;
-            background-color: white;
-          }
-
-          .custom-form-shadow {
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
-            border: 1px solid #ddd6fe;
-          }
-
-          button:hover {
-            transform: scale(1.015);
-          }
-
-          label {
-            letter-spacing: 0.3px;
-          }
-        `}</style>
       </form>
     </div>
   );
