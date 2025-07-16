@@ -1,9 +1,9 @@
 'use client';
 export default function Navigation() {
   return (
-    <nav className="navbar navbar-expand-lg bg-body-tertiary">
+    <nav className="navbar navbar-expand-lg bg-body-tertiary fs-5">
       <div className="container-fluid">
-        <a className="navbar-brand" href="/">FrontEnd</a>
+        <a className="navbar-brand fs-4" href="/">FrontEnd</a>
         <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
           <span className="navbar-toggler-icon" />
         </button>
@@ -20,7 +20,7 @@ export default function Navigation() {
               <a className="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                 Dropdown
               </a>
-              <ul className="dropdown-menu">
+              <ul className="dropdown-menu fs-5">
                 <li><a className="dropdown-item" href="/about">About</a></li>
                 <li><a className="dropdown-item" href="/service">Service</a></li>
                 <li><a className="dropdown-item" href="/contact">Contact</a></li>
@@ -35,12 +35,12 @@ export default function Navigation() {
 
           {/* Search form */}
           <form className="d-flex me-3" role="search">
-            <input className="form-control me-2" type="search" placeholder="Search" aria-label="Search" />
-            <button className="btn btn-outline-success" type="submit">Search</button>
+            <input className="form-control me-2 fs-5" type="search" placeholder="Search" aria-label="Search" />
+            <button className="btn btn-outline-success fs-5" type="submit">Search</button>
           </form>
 
           {/* Login Button */}
-          <a href="/login" className="btn btn-primary">Login</a>
+          <a href="/login" className="btn btn-primary fs-5">Login</a>
         </div>
       </div>
     </nav>
