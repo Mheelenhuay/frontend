@@ -54,10 +54,6 @@ const style = {
     outline: 'none',
     transition: 'box-shadow 0.2s ease, border-color 0.2s ease',
   },
-  inputFocusGreen: {
-    borderColor: '#34d399', // green-400
-    boxShadow: '0 0 0 2px #34d399',
-  },
   checkboxContainer: {
     display: 'flex',
     alignItems: 'center',
@@ -130,8 +126,18 @@ export default function Login() {
             style={style.input}
             value={username}
             onChange={(e) => setUsername(e.target.value)}
-            onFocus={(e) => (e.target.style = { ...style.input, ...style.inputFocusGreen })}
-            onBlur={(e) => (e.target.style = style.input)}
+            onFocus={(e) => {
+              Object.assign(e.target.style, {
+                borderColor: '#34d399',
+                boxShadow: '0 0 0 2px #34d399',
+              });
+            }}
+            onBlur={(e) => {
+              Object.assign(e.target.style, {
+                borderColor: '#d1d5db',
+                boxShadow: 'none',
+              });
+            }}
           />
         </div>
 
@@ -147,8 +153,18 @@ export default function Login() {
             style={style.input}
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            onFocus={(e) => (e.target.style = { ...style.input, ...style.inputFocusGreen })}
-            onBlur={(e) => (e.target.style = style.input)}
+            onFocus={(e) => {
+              Object.assign(e.target.style, {
+                borderColor: '#34d399',
+                boxShadow: '0 0 0 2px #34d399',
+              });
+            }}
+            onBlur={(e) => {
+              Object.assign(e.target.style, {
+                borderColor: '#d1d5db',
+                boxShadow: 'none',
+              });
+            }}
           />
         </div>
 
@@ -172,7 +188,12 @@ export default function Login() {
           style={{ ...style.button, ...(btnHover ? style.buttonHover : {}) }}
           onMouseEnter={() => setBtnHover(true)}
           onMouseLeave={() => setBtnHover(false)}
-          onClick={() => alert('เข้าสู่ระบบเรียบร้อย 🎉')}
+          onClick={(e) => {
+            e.preventDefault(); // ป้องกันรีเฟรชหน้า
+            alert('เข้าสู่ระบบเรียบร้อย 🎉');
+          }}
+          disabled={!username || !password}
+          title={!username || !password ? 'กรุณากรอกข้อมูลให้ครบ' : ''}
         >
           🔓 Login
         </button>
@@ -188,7 +209,7 @@ export default function Login() {
             สมัครสมาชิก
           </a>
           <a
-            href="/forgot-password"
+            href="/"
             style={style.link}
             onMouseEnter={(e) => (e.target.style.textDecoration = 'underline')}
             onMouseLeave={(e) => (e.target.style.textDecoration = 'none')}
