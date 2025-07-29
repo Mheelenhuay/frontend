@@ -1,12 +1,59 @@
+'use client';
+
 export default function About() {
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-r from-indigo-100 via-purple-100 to-pink-100 px-6">
-      <h1 className="text-6xl text-center text-indigo-700 font-extrabold mb-6 drop-shadow-lg">
-        About Page
-      </h1>
-      <h2 className="text-4xl font-semibold text-purple-800 mb-8 text-center max-w-xl">
-        Pattarasai Jaipong <span className="text-pink-600">muhahaha 037 XDDDDDDD</span>
-      </h2>
-    </div>
+    <>
+      <style jsx>{`
+        .about-container {
+          min-height: 100vh;
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          align-items: center;
+          background: linear-gradient(to right, #b9fbc0, #66bb6a);
+          padding: 1.5rem;
+        }
+
+        .title {
+          font-size: 3.75rem;
+          text-align: center;
+          color: #2e7d32;
+          font-weight: 800;
+          margin-bottom: 1.5rem;
+          text-shadow: 0 3px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .subtitle {
+          font-size: 2.25rem;
+          font-weight: 600;
+          color: #1b5e20;
+          text-align: center;
+          max-width: 36rem;
+          margin-bottom: 2rem;
+        }
+
+        .highlight {
+          color: #ff7043;
+          font-weight: bold;
+        }
+
+        @media (max-width: 640px) {
+          .title {
+            font-size: 2.5rem;
+          }
+
+          .subtitle {
+            font-size: 1.5rem;
+          }
+        }
+      `}</style>
+
+      <div className="about-container">
+        <h1 className="title">About Page</h1>
+        <h2 className="subtitle">
+          Pattarasai Jaipong <span className="highlight">muhahaha 037 XDDDDDDD</span>
+        </h2>
+      </div>
+    </>
   );
 }

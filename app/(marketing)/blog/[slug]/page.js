@@ -1,4 +1,5 @@
 // app/blog/[slug]/page.tsx
+'use client';
 
 export default async function BlogPost({ params }) {
   const { slug } = await params;
