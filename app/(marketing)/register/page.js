@@ -1,5 +1,7 @@
 'use client';
+
 import { useState } from 'react';
+import Swal from 'sweetalert2';
 
 const style = {
   container: {
@@ -133,18 +135,71 @@ export default function Register() {
     });
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (!form.accepted) return;
-    alert('🎉 สมัครสมาชิกสำเร็จ!');
+  const handleSubmit = async (e) => {
+  e.preventDefault();
+  if (!form.accepted) return;
+
+  const payload = {
+    firstname: form.prefix,
+    fullname: form.firstName,
+    lastname: form.lastName,
+    username: form.username,
+    password: form.password,
+    address: form.address,
+    sex: form.gender,
+    birthday: form.birthdate,
   };
+
+  try {
+    const res = await fetch('http://itdev.cmtc.ac.th:3000/api/users', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(payload),
+    });
+
+    const data = await res.json();
+
+    if (res.ok) {
+      Swal.fire({
+        icon: 'success',
+        title: 'สมัครสมาชิกสำเร็จ',
+        text: 'คุณสามารถเข้าสู่ระบบได้แล้ว',
+      });
+      setForm({
+        username: '',
+        password: '',
+        prefix: '',
+        firstName: '',
+        lastName: '',
+        address: '',
+        gender: '',
+        birthdate: '',
+        accepted: false,
+      });
+    } else {
+      Swal.fire({
+        icon: 'error',
+        title: 'เกิดข้อผิดพลาด',
+        text: data.message || 'ไม่สามารถสมัครสมาชิกได้',
+      });
+    }
+  } catch (error) {
+    Swal.fire({
+      icon: 'error',
+      title: 'ข้อผิดพลาดเครือข่าย',
+      text: 'ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์ได้',
+    });
+  }
+};
 
   const isSubmitDisabled = !form.accepted;
 
   return (
     <div style={style.container}>
       <form onSubmit={handleSubmit} style={style.form}>
-        <h1 style={style.heading}> สมัครสมาชิก</h1>
+        <h1 style={style.heading}>สมัครสมาชิก</h1>
         <p style={style.subtitle}>กรอกข้อมูลให้ครบถ้วนเพื่อสร้างบัญชีของคุณ</p>
 
         <div style={style.gridContainer}>
