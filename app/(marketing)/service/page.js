@@ -10,14 +10,14 @@ export default function Service() {
           flex-direction: column;
           justify-content: center;
           align-items: center;
-          background: linear-gradient(to right, #e0e7ff, #f3e8ff, #fce7f3);
+          background: linear-gradient(to right, #d1fae5, #f0fdf4, #dcfce7);
           padding: 1.5rem;
         }
 
         .title {
           font-size: 3.75rem;
           text-align: center;
-          color: #4338ca;
+          color: #065f46; /* สีเขียวเข้มเพื่อความเป็นธรรมชาติ */
           font-weight: 800;
           margin-bottom: 1.5rem;
           text-shadow: 0 3px 5px rgba(0, 0, 0, 0.1);
@@ -26,21 +26,21 @@ export default function Service() {
         .subtitle {
           font-size: 2.25rem;
           font-weight: 600;
-          color: #6b21a8;
+          color: #047857;
           text-align: center;
           max-width: 36rem;
           margin-bottom: 2rem;
         }
 
         .highlight {
-          color: #db2777;
+          color: #16a34a;
         }
 
         .service-list {
           display: grid;
           grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
           gap: 1.5rem;
-          max-width: 800px;
+          max-width: 900px;
           width: 100%;
           margin-top: 1.5rem;
         }
@@ -61,7 +61,7 @@ export default function Service() {
         .service-title {
           font-size: 1.25rem;
           font-weight: 600;
-          color: #4c1d95;
+          color: #065f46;
           margin-bottom: 0.5rem;
         }
 
@@ -82,28 +82,36 @@ export default function Service() {
       `}</style>
 
       <div className="service-container">
-        <h1 className="title">Service Page</h1>
+        <h1 className="title">บริการช่วยเหลืองู 🐍</h1>
         <h2 className="subtitle">
-          Pattarasai Jaipong <span className="highlight">muhahaha 037 XDDDDDDD</span>
+          Pattarasai Jaipong <span className="highlight">ช่วยเหลืองูทุกชนิด</span>
         </h2>
 
         {/* รายการบริการ */}
         <div className="service-list">
           <div className="service-card">
-            <div className="service-title">🌐 Web Design</div>
-            <div className="service-desc">ออกแบบเว็บไซต์ทันสมัย สวยงาม ใช้งานง่าย</div>
+            <div className="service-title">🪤 จับงู</div>
+            <div className="service-desc">
+              ให้บริการจับงูอย่างปลอดภัย ทั้งในบ้านและพื้นที่สาธารณะ
+            </div>
           </div>
           <div className="service-card">
-            <div className="service-title">🎨 Graphic Design</div>
-            <div className="service-desc">ออกแบบโลโก้ โบรชัวร์ แบนเนอร์ออนไลน์</div>
+            <div className="service-title">🚑 ช่วยเหลืองูบาดเจ็บ</div>
+            <div className="service-desc">
+              ให้การดูแลเบื้องต้นกับงูที่ได้รับบาดเจ็บก่อนส่งต่อสถานพยาบาลสัตว์
+            </div>
           </div>
           <div className="service-card">
-            <div className="service-title">📱 UI/UX Design</div>
-            <div className="service-desc">ออกแบบอินเทอร์เฟซสำหรับแอปพลิเคชัน</div>
+            <div className="service-title">🌿 ปล่อยงูคืนธรรมชาติ</div>
+            <div className="service-desc">
+              ปล่อยงูคืนสู่ธรรมชาติอย่างปลอดภัย หลังจากช่วยเหลือหรือดูแล
+            </div>
           </div>
           <div className="service-card">
-            <div className="service-title">🛠 Frontend Development</div>
-            <div className="service-desc">สร้างเว็บแอปที่สวยงามด้วย HTML, CSS, React</div>
+            <div className="service-title">📞 ให้คำปรึกษางู</div>
+            <div className="service-desc">
+              ให้คำปรึกษาเกี่ยวกับงู การป้องกัน และวิธีปฏิบัติเมื่อเจองู
+            </div>
           </div>
         </div>
       </div>
