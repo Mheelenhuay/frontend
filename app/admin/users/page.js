@@ -2,29 +2,42 @@
 
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 
-export default function Page() {
+export default function UsersPage() {
   const [items, setItems] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const router = useRouter();
 
   useEffect(() => {
+    // ตรวจสอบ token
+    const token = localStorage.getItem('token');
+    if (!token) {
+      router.push('/signin');
+      return;
+    }
+
     async function getUsers() {
       try {
         const res = await fetch('http://itdev.cmtc.ac.th:3000/api/users');
         if (!res.ok) {
           console.error('Failed to fetch data');
+          setLoading(false);
           return;
         }
         const data = await res.json();
         setItems(data);
+        setLoading(false);
       } catch (error) {
         console.error('Error fetching data:', error);
+        setLoading(false);
       }
     }
 
     getUsers();
     const interval = setInterval(getUsers, 1000);
     return () => clearInterval(interval);
-  }, []);
+  }, [router]);
 
   const handleDelete = async (id) => {
     const confirmed = confirm('คุณแน่ใจหรือไม่ว่าต้องการลบผู้ใช้นี้?');
@@ -37,10 +50,8 @@ export default function Page() {
           Accept: 'application/json',
         },
       });
-
       const result = await res.json();
       console.log('Deleted:', result);
-      // ไม่ต้อง setItems ใหม่เพราะมี setInterval อยู่แล้ว
     } catch (error) {
       console.error('Error deleting user:', error);
     }
@@ -105,6 +116,10 @@ export default function Page() {
       cursor: 'pointer',
     },
   };
+
+  if (loading) {
+    return <div className='text-center'><h1>Loading...</h1></div>;
+  }
 
   return (
     <div style={style.container}>
