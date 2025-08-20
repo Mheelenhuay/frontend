@@ -26,7 +26,7 @@ export default function Register({ params }) {
 
     async function fetchUser() {
       try {
-        const res = await fetch(`http://itdev.cmtc.ac.th:3000/api/users/${id}`);
+        const res = await fetch(`https://backend-nextjs-virid.vercel.app/api/users/${id}`);
         const data = await res.json();
         if (Array.isArray(data) && data.length > 0) {
           const user = data[0];
@@ -74,7 +74,7 @@ export default function Register({ params }) {
     };
 
     try {
-      const res = await fetch('http://itdev.cmtc.ac.th:3000/api/users', {
+      const res = await fetch('https://backend-nextjs-virid.vercel.app/api/users', {
         method: isEditMode ? 'PUT' : 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(isEditMode ? { id, ...payload } : payload),
