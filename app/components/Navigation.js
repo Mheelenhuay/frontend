@@ -42,6 +42,7 @@ export default function Navigation() {
                 <li><a className="dropdown-item" href="/about">About</a></li>
                 <li><a className="dropdown-item" href="/service">Service</a></li>
                 <li><a className="dropdown-item" href="/contact">Contact</a></li>
+                <li><a className="dropdown-item" href="/admin/users">Admin Users</a></li>
                 <li><hr className="dropdown-divider" /></li>
                 <li><a className="dropdown-item" href="https://www.youtube.com/watch?v=1vrEljMfXYo&list=RD1vrEljMfXYo&start_radio=1">Take me Home</a></li>
               </ul>

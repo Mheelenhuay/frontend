@@ -10,8 +10,9 @@ export default function Page() {
   const router = useRouter();
 
   const handleLogin = async (e) => {
-    e.preventDefault();
+  e.preventDefault();
 
+  try {
     const res = await fetch('http://itdev.cmtc.ac.th:3000/api/auth/login', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -19,25 +20,39 @@ export default function Page() {
     });
 
     const data = await res.json();
-    console.log(username);
 
     if (data.token) {
-      localStorage.setItem('token', data.token);  
+      localStorage.setItem('token', data.token);
+
       Swal.fire({
         icon: 'success',
         title: '<h3>Login Successfuly!</h3>',
         showConfirmButton: false,
-        timer: 2000
-      }).then(() => router.push('/admin/users'));
+        timer: 2000,
+      }).then(() => {
+        // ใช้ window.location.href แทน router.push
+        window.location.href = "/admin/users";
+      });
+
     } else {
       Swal.fire({
         icon: 'warning',
         title: '<h3>Login Failed!</h3>',
         showConfirmButton: false,
-        timer: 2000
-      }).then(() => router.push('/signin'));
+        timer: 2000,
+      }).then(() => {
+        router.push('/signin'); // หรือ redirect หน้า signin
+      });
     }
-  };
+  } catch (err) {
+    console.error(err);
+    Swal.fire({
+      icon: 'error',
+      title: 'เกิดข้อผิดพลาด!',
+      text: err.message,
+    });
+  }
+};
 
   const style = {
   container: {
