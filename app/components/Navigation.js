@@ -1,5 +1,23 @@
 'use client';
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+
 export default function Navigation() {
+  const router = useRouter();
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  // ตรวจสอบ token ตอน mount
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    setIsLoggedIn(!!token);
+  }, []);
+
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    setIsLoggedIn(false);
+    router.push('/login'); // ส่งกลับไปหน้า login
+  };
+
   return (
     <nav className="navbar navbar-expand-lg bg-body-tertiary fs-5">
       <div className="container-fluid">
@@ -36,8 +54,12 @@ export default function Navigation() {
             <button className="btn btn-outline-success fs-5" type="submit">Search</button>
           </form>
 
-          {/* Login Button */}
-          <a href="/login" className="btn btn-primary fs-5">Login</a>
+          {/* Login / Logout Button */}
+          {isLoggedIn ? (
+            <button onClick={handleLogout} className="btn btn-danger fs-5">Logout</button>
+          ) : (
+            <a href="/login" className="btn btn-primary fs-5">Login</a>
+          )}
         </div>
       </div>
     </nav>

@@ -1,9 +1,8 @@
-'use client'
+'use client';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import Link from 'next/link'
-import Swal from 'sweetalert2'
-
+import Link from 'next/link';
+import Swal from 'sweetalert2';
 
 export default function Page() {
   const [username, setUsername] = useState('');
@@ -15,9 +14,7 @@ export default function Page() {
 
     const res = await fetch('http://itdev.cmtc.ac.th:3000/api/auth/login', {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ username, password }),
     });
 
@@ -25,66 +22,132 @@ export default function Page() {
     console.log(username);
 
     if (data.token) {
-    localStorage.setItem('token', data.token);  
-    Swal.fire({
+      localStorage.setItem('token', data.token);  
+      Swal.fire({
         icon: 'success',
         title: '<h3>Login Successfuly!</h3>',
         showConfirmButton: false,
         timer: 2000
-        }).then(function () {
-        router.push('/admin/users');
-      });
+      }).then(() => router.push('/admin/users'));
     } else {
-      
-    Swal.fire({
+      Swal.fire({
         icon: 'warning',
         title: '<h3>Login Failed!</h3>',
         showConfirmButton: false,
         timer: 2000
-        }).then(function () {
-          router.push('/signin');
-      });
- 
+      }).then(() => router.push('/signin'));
     }
   };
 
+  const style = {
+  container: {
+    minHeight: '100vh',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    background: 'linear-gradient(to right, #fbc2eb, #f99fc9)',
+    padding: '2rem',
+  },
+  card: {
+    backgroundColor: '#fff0f6',
+    borderRadius: '1.5rem',
+    padding: '2.5rem', // เพิ่ม padding จาก 2rem เป็น 2.5rem
+    boxShadow: '0 10px 25px rgba(251, 194, 235, 0.3)',
+    maxWidth: '400px',
+    width: '100%',
+    border: '2px solid #f472b6',
+  },
+  header: {
+    background: 'linear-gradient(to right, #f472b6, #ec4899)',
+    color: '#fff',
+    fontWeight: '700',
+    fontSize: '1.5rem',
+    padding: '1rem',
+    borderRadius: '1.5rem 1.5rem 0 0',
+    textAlign: 'center',
+    marginBottom: '2rem', // เพิ่มจาก 1rem เป็น 2rem
+  },
+  inputGroup: {
+    marginBottom: '1.75rem', // เพิ่มระยะห่าง input
+  },
+  input: {
+    borderRadius: '0.75rem',
+    border: '1px solid #f472b6',
+    padding: '0.5rem 0.75rem', // เพิ่ม padding ข้างใน input
+  },
+  button: {
+    width: '100%',
+    background: 'linear-gradient(to right, #f472b6, #ec4899)',
+    color: '#fff',
+    fontWeight: '600',
+    border: 'none',
+    borderRadius: '0.75rem',
+    padding: '0.6rem',
+    cursor: 'pointer',
+    transition: 'all 0.3s ease',
+  },
+  buttonHover: {
+    opacity: 0.9,
+    transform: 'scale(1.02)',
+  },
+  links: {
+    marginTop: '1.5rem', // เพิ่มระยะห่าง links จาก button
+    display: 'flex',
+    justifyContent: 'space-between',
+    fontSize: '0.9rem',
+    color: '#ec4899',
+  },
+  link: {
+    textDecoration: 'none',
+    cursor: 'pointer',
+  },
+};
+
+  const [btnHover, setBtnHover] = useState(false);
+
   return (
-    <>
-    <br /><br /><br />
-<div className="container">
-<div className="card">
-  <div className="card-header bg-success text-white">
-    SignIn Form
-  </div>
-  <div className="card-body">
+    <div style={style.container}>
+      <div style={style.card}>
+        <div style={style.header}>SignIn Form 💖</div>
 
-  <form className="row g-3" onSubmit={handleLogin}>
-  <div className="col-md-12">
-  <label className="form-label">Username</label>
-    <div className="input-group">
-      <span className="input-group-text" id="basic-addon3"><i className="bi bi-person-vcard"></i></span>
-    <input type="text" className="form-control" id="formGroupExampleInput" defaultValue={username} placeholder="Username" onChange={(e) => setUsername(e.target.value)} />
-  </div>
-  </div>
-  <div className="col-md-12">
-  <label className="form-label">Password</label>
-    <div className="input-group">
-      <span className="input-group-text" id="basic-addon3"><i className="bi bi-person-vcard"></i></span>
-    <input type="text" className="form-control" id="formGroupExampleInput2" defaultValue={password} placeholder="Password" onChange={(e) => setPassword(e.target.value)} />
-  </div>
-  </div>
-  <div className="col-12">
-    <button type="submit" className="btn btn-primary">Sign In</button>
-  </div>
-  <div className="col-12">
-    <Link href="/register">Create Account</Link> | <Link href="/">Forget Password</Link>
-  </div>
-  </form>
-  </div>
-  </div>
+        <form onSubmit={handleLogin}>
+          <div style={style.inputGroup}>
+            <label>Username</label>
+            <input
+              type="text"
+              placeholder="Username"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              style={style.input}
+            />
+          </div>
 
+          <div style={style.inputGroup}>
+            <label>Password</label>
+            <input
+              type="password"
+              placeholder="Password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              style={style.input}
+            />
+          </div>
 
-  </div>
-    </>
+          <button
+            type="submit"
+            style={{ ...style.button, ...(btnHover ? style.buttonHover : {}) }}
+            onMouseEnter={() => setBtnHover(true)}
+            onMouseLeave={() => setBtnHover(false)}
+          >
+            Sign In
+          </button>
+        </form>
+
+        <div style={style.links}>
+          <Link href="/register" style={style.link}>Create Account</Link>
+          <Link href="/" style={style.link}>Forget Password</Link>
+        </div>
+      </div>
+    </div>
   );
 }
