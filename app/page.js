@@ -1,3 +1,5 @@
+"use client";
+import { useEffect } from "react";
 import Carousel from "./components/Carousel";
 import Card from "./components/Card";
 
@@ -9,42 +11,44 @@ const style = {
     justifyContent: 'flex-start',
     minHeight: '100vh',
     padding: '2rem',
-    background: 'linear-gradient(135deg, #c4b5fd, #f9a8d4, #fcd34d)',
+    background: 'linear-gradient(135deg, #064e3b, #10b981, #a7f3d0)',
     backgroundSize: '400% 400%',
     animation: 'gradientAnimation 15s ease infinite',
   },
   carouselWrapper: {
-    width: 'calc(100vw - 2rem)', // เว้นขอบซ้ายขวา 1rem
-    maxWidth: '1200px',           // ความกว้างสูงสุด
+    width: 'calc(100vw - 2rem)',
+    maxWidth: '1200px',
     height: '60vh',
     marginBottom: '3rem',
-    borderRadius: '1rem',        // เพิ่มมุมโค้งนิด ๆ
+    borderRadius: '1rem',
     overflow: 'hidden',
-    boxShadow: '0 8px 20px rgba(0,0,0,0.15)', // เพิ่มเงาเล็ก ๆ ให้ลอย
+    boxShadow: '0 8px 20px rgba(0,0,0,0.15)',
   },
-  carouselImage: {
-    width: '100%',
-    height: '100%',
-    objectFit: 'cover',
+  box: {
+    backgroundColor: 'rgba(255, 255, 255, 0.95)',
+    borderRadius: '1rem',
+    padding: '2rem',
+    maxWidth: '800px',
+    textAlign: 'center',
+    boxShadow: '0 6px 15px rgba(0,0,0,0.1)',
+    marginBottom: '2rem',
+    lineHeight: '1.6',
   },
   heading1: {
-    fontSize: '4rem',
+    fontSize: '3.5rem',
     textAlign: 'center',
-    color: '#1e3a8a',
+    color: '#065f46',
     fontWeight: '800',
-    marginBottom: '1.5rem',
-    textShadow: '0 2px 5px rgba(0,0,0,0.2)',
+    marginBottom: '1rem',
+    textShadow: '0 2px 5px rgba(0,0,0,0.15)',
   },
   heading2: {
-    fontSize: '2.25rem',
-    fontWeight: '600',
-    textAlign: 'center',
-    color: '#831843',
-    marginBottom: '3rem',
-    maxWidth: '36rem',
+    fontSize: '1.25rem',
+    color: '#064e3b',
   },
   highlight: {
-    color: '#f43f5e',
+    color: '#e91717ff',
+    fontWeight: '600',
   },
 };
 
@@ -57,6 +61,14 @@ const styleGlobal = `
 `;
 
 export default function Home() {
+  useEffect(() => {
+    const alreadyRefreshed = localStorage.getItem("alreadyRefreshed");
+    if (!alreadyRefreshed) {
+      localStorage.setItem("alreadyRefreshed", "true");
+      window.location.reload(); // รีเฟรชหน้า 1 ครั้ง
+    }
+  }, []);
+
   return (
     <>
       <style>{styleGlobal}</style>
@@ -65,10 +77,17 @@ export default function Home() {
           <Carousel />
         </div>
 
-        <h1 style={style.heading1}>Home Page</h1>
-        <h2 style={style.heading2}>
-          Pattarasai Jaipong <span style={style.highlight}>muhahaha 037 XDDDDDDD</span>
-        </h2>
+        <div style={style.box}>
+          <h1 style={style.heading1}>การระวังและเรียนรู้เกี่ยวกับงู</h1>
+          <h2 style={style.heading2}>
+            งูเป็นสัตว์ที่น่าสนใจแต่บางชนิดสามารถเป็นอันตรายได้
+            <br />
+            ควรสังเกตสิ่งแวดล้อมและ <span style={style.highlight}>ระวังงูทุกครั้ง</span> 
+            เมื่อต้องอยู่ใกล้พื้นที่ป่า หรือพื้นที่ที่มีพืชสูง
+            <br />
+            การเรียนรู้วิธีสังเกตและปฏิบัติตัวอย่างปลอดภัยสามารถช่วยป้องกันอุบัติเหตุได้
+          </h2>
+        </div>
 
         <Card />
       </div>

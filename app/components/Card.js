@@ -19,6 +19,24 @@ const snakeData = [
     image: "/images/snake/snake_03.jpg",
     alt: "งูจงอาง"
   },
+  {
+    title: "งูสายรุ้งหรรษา",
+    description: "งูสายรุ้งสีสวย ชอบเลื้อยเล่นในสวน ไม่มีพิษ",
+    image: "/images/snake/snake_04.jpg",
+    alt: "งูสายรุ้ง"
+  },
+  {
+  title: "งูสิงห์ซูเปอร์ไซส์",
+  description: "งูสิงห์ไม่มีพิษ แต่ขนาดตัวใหญ่มาก ใหญ่จนเรียกว่าซูเปอร์ไซส์ได้เลย",
+  image: "/images/snake/snake_05.jpg",
+  alt: "งูสิงห์"
+  },
+  {
+  title: "งูจงอางบู้บี้",
+    description: "งูจงอาง เป็นงูมีพิษร้ายแรงที่สุดในไทย",
+    image: "/images/snake/snake_06.jpg",
+    alt: "งูจงอาง"
+  },
 ];
 
 export default function Card() {
@@ -45,4 +63,3 @@ export default function Card() {
     </div>
   );
 }
-

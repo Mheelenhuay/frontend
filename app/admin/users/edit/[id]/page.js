@@ -1,9 +1,11 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';  // ✅ เพิ่ม
 import Swal from 'sweetalert2';
 
 export default function Register({ params }) {
+  const router = useRouter(); // ✅ ใช้งาน router
   const isEditMode = !!params?.id;
   const id = params?.id || '';
 
@@ -87,21 +89,26 @@ export default function Register({ params }) {
           icon: 'success',
           title: isEditMode ? 'แก้ไขข้อมูลสำเร็จ' : 'สมัครสมาชิกสำเร็จ',
           text: isEditMode ? 'ข้อมูลได้รับการอัปเดตแล้ว' : 'คุณสามารถเข้าสู่ระบบได้แล้ว',
+          timer: 1500,
+          showConfirmButton: false,
+        }).then(() => {
+          if (isEditMode) {
+            router.push('/admin/users');   // ✅ redirect หลังแก้ไข
+            router.refresh();              // ✅ โหลดข้อมูลใหม่
+          } else {
+            setForm({
+              username: '',
+              password: '',
+              prefix: '',
+              firstName: '',
+              lastName: '',
+              address: '',
+              gender: '',
+              birthdate: '',
+              accepted: false,
+            });
+          }
         });
-
-        if (!isEditMode) {
-          setForm({
-            username: '',
-            password: '',
-            prefix: '',
-            firstName: '',
-            lastName: '',
-            address: '',
-            gender: '',
-            birthdate: '',
-            accepted: false,
-          });
-        }
       } else {
         Swal.fire({
           icon: 'error',

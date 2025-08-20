@@ -1,7 +1,11 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
-import Navigation from "./components/Navigation"
-import Footer from "./components/Footer"
+import Navigation from "./components/Navigation";
+import Footer from "./components/Footer";
+import { Prompt } from "next/font/google";
+
+// เลือกน้ำหนักตัวอักษร 400, 500, 700
+const prompt = Prompt({ subsets: ["latin", "thai"], weight: ["400","500","700"] });
 
 export const metadata = {
   title: "เว็ปไซต์สำหรับการเรียนรู้ 037",
@@ -10,15 +14,12 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en">
-      <body className="antialiased">
+    <html lang="th">
+      <body className={`${prompt.className} antialiased`}>
         <Navigation />
         <main>{children}</main>
-
         <Footer />     
-
       </body>
     </html>
   );
 }
-

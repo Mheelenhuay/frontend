@@ -111,25 +111,29 @@ export default function Login() {
     e.preventDefault();
 
     try {
-      const res = await fetch('https://backend-nextjs-virid.vercel.app/api/auth/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username, password }),
-      });
+      const res = await fetch(
+        'https://backend-nextjs-virid.vercel.app/api/auth/login',
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username, password }),
+        }
+      );
 
       const data = await res.json();
 
       if (data.token) {
-        localStorage.setItem('token', data.token);
-        Swal.fire({
-          icon: 'success',
-          title: 'เข้าสู่ระบบสำเร็จ 🎉',
-          showConfirmButton: false,
-          timer: 1500,
-        }).then(() => {
-          router.push('/'); // เปลี่ยนเป็นหน้า /page.js
-        });
-      } else {
+  localStorage.setItem('token', data.token);
+  localStorage.removeItem('alreadyRefreshed'); // เคลียร์ค่าเก่า
+  Swal.fire({
+    icon: 'success',
+    title: 'เข้าสู่ระบบสำเร็จ 🎉',
+    showConfirmButton: false,
+    timer: 1500,
+  }).then(() => {
+    router.push('/');
+  });
+} else {
         Swal.fire({
           icon: 'error',
           title: 'เข้าสู่ระบบล้มเหลว ❌',
@@ -152,7 +156,9 @@ export default function Login() {
     <div style={style.container}>
       <div style={style.card}>
         <h1 style={style.heading}>ยินดีต้อนรับ!</h1>
-        <p style={style.subtitle}>กรุณาเข้าสู่ระบบเพื่อใช้งานระบบของเรา</p>
+        <p style={style.subtitle}>
+          กรุณาเข้าสู่ระบบเพื่อใช้งานระบบของเรา
+        </p>
 
         <form onSubmit={handleLogin}>
           <div style={style.formGroup}>
@@ -198,7 +204,10 @@ export default function Login() {
 
           <button
             type="submit"
-            style={{ ...style.button, ...(btnHover ? style.buttonHover : {}) }}
+            style={{
+              ...style.button,
+              ...(btnHover ? style.buttonHover : {}),
+            }}
             onMouseEnter={() => setBtnHover(true)}
             onMouseLeave={() => setBtnHover(false)}
             disabled={!username || !password}
