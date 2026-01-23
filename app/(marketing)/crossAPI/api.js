@@ -1,4 +1,5 @@
-const API_URL = "https://back-end-dusky-three.vercel.app"; 
+const API_URL = "https://back-end-dusky-three.vercel.app"; // local
+// const API_URL = "https://YOUR_BACKEND.vercel.app"; // ตอน deploy
 
 async function request(url, options = {}) {
   const token = localStorage.getItem("token");
@@ -23,7 +24,7 @@ async function request(url, options = {}) {
   return data;
 }
 
-// ✅ Login
+// ✅ login
 export function loginAPI(username, password) {
   return request("/api/login", {
     method: "POST",
@@ -31,31 +32,15 @@ export function loginAPI(username, password) {
   });
 }
 
-// ✅ Users
+// ✅ get users
 export function getUsersAPI() {
   return request("/api/users");
 }
 
-export function getUserByIdAPI(id) {
-  return request(`/api/users/${id}`);
-}
-
+// ✅ create user
 export function createUserAPI(data) {
   return request("/api/users", {
     method: "POST",
     body: JSON.stringify(data),
-  });
-}
-
-export function updateUserAPI(id, data) {
-  return request(`/api/users/${id}`, {
-    method: "PUT",
-    body: JSON.stringify(data),
-  });
-}
-
-export function deleteUserAPI(id) {
-  return request(`/api/users/${id}`, {
-    method: "DELETE",
   });
 }

@@ -1,278 +1,139 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';  // ✅ เพิ่ม
+import { useParams, useRouter } from 'next/navigation';
 import Swal from 'sweetalert2';
 
-export default function Register({ params }) {
-  const router = useRouter(); // ✅ ใช้งาน router
-  const isEditMode = !!params?.id;
-  const id = params?.id || '';
+const API_URL = "https://back-end-dusky-three.vercel.app";
+// const API_URL = "https://YOUR_BACKEND.vercel.app";
 
+export default function EditUserPage() {
+  const { id } = useParams();
+  const router = useRouter();
+
+  const [loading, setLoading] = useState(true);
   const [form, setForm] = useState({
+    firstname: '',
+    fullname: '',
+    lastname: '',
     username: '',
     password: '',
-    prefix: '',
-    firstName: '',
-    lastName: '',
-    address: '',
-    gender: '',
-    birthdate: '',
-    accepted: false,
+    status: 'active',
   });
 
-  const [btnHover, setBtnHover] = useState(false);
-
+  // ✅ โหลดข้อมูล user
   useEffect(() => {
-    if (!isEditMode) return;
-
     async function fetchUser() {
       try {
-        const res = await fetch(`https://backend-nextjs-virid.vercel.app/api/users/${id}`);
+        const res = await fetch(`${API_URL}/api/users/${id}`);
         const data = await res.json();
-        if (Array.isArray(data) && data.length > 0) {
-          const user = data[0];
-          setForm({
-            username: user.username || '',
-            password: user.password || '',
-            prefix: user.firstname || '',
-            firstName: user.fullname || '',
-            lastName: user.lastname || '',
-            address: user.address || '',
-            gender: user.sex || '',
-            birthdate: user.birthday || '',
-            accepted: true,
-          });
-        }
+
+        if (!res.ok) throw new Error(data.error || "Load user failed");
+
+        setForm({
+          firstname: data.firstname || '',
+          fullname: data.fullname || '',
+          lastname: data.lastname || '',
+          username: data.username || '',
+          password: '', // ❗ ไม่โหลด password เดิม
+          status: data.status || 'active',
+        });
       } catch (err) {
-        console.error('โหลดข้อมูลผิดพลาด:', err);
+        Swal.fire({
+          icon: 'error',
+          title: 'โหลดข้อมูลไม่สำเร็จ ❌',
+          text: err.message,
+        });
+      } finally {
+        setLoading(false);
       }
     }
 
-    fetchUser();
-  }, [id, isEditMode]);
+    if (id) fetchUser();
+  }, [id]);
 
+  // ✅ handle change
   const handleChange = (e) => {
-    const { name, value, type, checked } = e.target;
-    setForm({
-      ...form,
-      [name]: type === 'checkbox' ? checked : value,
-    });
+    const { name, value } = e.target;
+    setForm({ ...form, [name]: value });
   };
 
+  // ✅ update user
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!form.accepted) return;
-
-    const payload = {
-      firstname: form.prefix,
-      fullname: form.firstName,
-      lastname: form.lastName,
-      username: form.username,
-      password: form.password,
-      address: form.address,
-      sex: form.gender,
-      birthday: form.birthdate,
-    };
 
     try {
-      const res = await fetch('https://backend-nextjs-virid.vercel.app/api/users', {
-        method: isEditMode ? 'PUT' : 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(isEditMode ? { id, ...payload } : payload),
+      const payload = { ...form };
+
+      // ❗ ถ้าไม่กรอก password → ไม่ส่งไป update
+      if (!payload.password) delete payload.password;
+
+      const res = await fetch(`${API_URL}/api/users/${id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
       });
 
       const data = await res.json();
 
-      if (res.ok) {
-        Swal.fire({
-          icon: 'success',
-          title: isEditMode ? 'แก้ไขข้อมูลสำเร็จ' : 'สมัครสมาชิกสำเร็จ',
-          text: isEditMode ? 'ข้อมูลได้รับการอัปเดตแล้ว' : 'คุณสามารถเข้าสู่ระบบได้แล้ว',
-          timer: 1500,
-          showConfirmButton: false,
-        }).then(() => {
-          if (isEditMode) {
-            router.push('/admin/users');   // ✅ redirect หลังแก้ไข
-            router.refresh();              // ✅ โหลดข้อมูลใหม่
-          } else {
-            setForm({
-              username: '',
-              password: '',
-              prefix: '',
-              firstName: '',
-              lastName: '',
-              address: '',
-              gender: '',
-              birthdate: '',
-              accepted: false,
-            });
-          }
-        });
-      } else {
-        Swal.fire({
-          icon: 'error',
-          title: 'เกิดข้อผิดพลาด',
-          text: data.message || 'ไม่สามารถดำเนินการได้',
-        });
-      }
-    } catch (error) {
+      if (!res.ok) throw new Error(data.error || "Update failed");
+
       Swal.fire({
-        icon: 'error',
-        title: 'ข้อผิดพลาดเครือข่าย',
-        text: 'ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์ได้',
+        icon: "success",
+        title: "แก้ไขข้อมูลสำเร็จ ✅",
+        timer: 1200,
+        showConfirmButton: false,
+      }).then(() => {
+        router.push("/admin/users");
+      });
+
+    } catch (err) {
+      Swal.fire({
+        icon: "error",
+        title: "แก้ไขไม่สำเร็จ ❌",
+        text: err.message,
       });
     }
   };
 
-  const isSubmitDisabled = !form.accepted;
-
-  const style = {
-    container: {
-      minHeight: '100vh',
-      display: 'flex',
-      justifyContent: 'center',
-      alignItems: 'center',
-      padding: '3rem 1rem',
-      background: 'linear-gradient(to right, #34d399, #6ee7b7, #a7f3d0)',
-    },
-    form: {
-      backgroundColor: 'white',
-      width: '100%',
-      maxWidth: '48rem',
-      padding: '2.5rem',
-      borderRadius: '2rem',
-      boxShadow: '0 10px 15px -3px rgba(52, 211, 153, 0.4), 0 4px 6px -2px rgba(52, 211, 153, 0.05)',
-    },
-    heading: {
-      fontSize: '2.5rem',
-      fontWeight: '800',
-      textAlign: 'center',
-      color: '#065f46',
-      marginBottom: '0.75rem',
-    },
-    subtitle: {
-      textAlign: 'center',
-      color: '#166534',
-      marginBottom: '2rem',
-      fontSize: '0.875rem',
-    },
-    gridContainer: {
-      display: 'grid',
-      gap: '1.5rem',
-      gridTemplateColumns: 'repeat(auto-fit, minmax(15rem, 1fr))',
-    },
-    label: {
-      display: 'block',
-      fontWeight: '600',
-      fontSize: '0.875rem',
-      marginBottom: '0.25rem',
-      color: '#14532d',
-    },
-    input: {
-      width: '100%',
-      padding: '0.5rem 1rem',
-      border: '1px solid #d1d5db',
-      borderRadius: '0.5rem',
-      fontSize: '1rem',
-      outline: 'none',
-    },
-    textarea: {
-      width: '100%',
-      padding: '0.5rem 1rem',
-      border: '1px solid #d1d5db',
-      borderRadius: '0.5rem',
-      fontSize: '1rem',
-      resize: 'vertical',
-    },
-    radioContainer: {
-      display: 'flex',
-      gap: '1.5rem',
-      marginTop: '0.25rem',
-    },
-    radioLabel: {
-      display: 'flex',
-      alignItems: 'center',
-      fontSize: '0.875rem',
-      color: '#4b5563',
-      cursor: 'pointer',
-    },
-    checkboxContainer: {
-      marginTop: '1.5rem',
-      display: 'flex',
-      alignItems: 'center',
-    },
-    checkbox: {
-      marginRight: '0.5rem',
-      accentColor: '#10b981',
-    },
-    submitButton: {
-      marginTop: '2rem',
-      width: '100%',
-      padding: '0.75rem 0',
-      background: 'linear-gradient(to right, #059669, #10b981)',
-      color: 'white',
-      fontWeight: 'bold',
-      fontSize: '1.125rem',
-      borderRadius: '1rem',
-      cursor: 'pointer',
-      border: 'none',
-    },
-    submitButtonHover: {
-      opacity: 0.9,
-      boxShadow: '0 12px 20px -5px rgba(16, 185, 129, 0.9)',
-    },
-    submitButtonDisabled: {
-      background: '#6ee7b7',
-      cursor: 'not-allowed',
-      boxShadow: 'none',
-      opacity: 0.6,
-    },
-  };
+  if (loading) return <p style={{ textAlign: "center" }}>Loading...</p>;
 
   return (
-    <div style={style.container}>
-      <form onSubmit={handleSubmit} style={style.form}>
-        <h1 style={style.heading}>{isEditMode ? 'แก้ไขข้อมูลผู้ใช้' : 'สมัครสมาชิก'}</h1>
-        <p style={style.subtitle}>
-          {isEditMode
-            ? 'กรุณาแก้ไขข้อมูลที่ต้องการ แล้วกดบันทึก'
-            : 'กรอกข้อมูลให้ครบถ้วนเพื่อสร้างบัญชีของคุณ'}
-        </p>
+    <div style={styles.container}>
+      <form onSubmit={handleSubmit} style={styles.form}>
+        <h1 style={styles.heading}>✏️ แก้ไขข้อมูลผู้ใช้</h1>
+        <p style={styles.subtitle}>แก้ไขข้อมูลแล้วกดบันทึก</p>
 
-        <div style={style.gridContainer}>
+        <div style={styles.gridContainer}>
           <div>
-            <label style={style.label}>👤 ชื่อผู้ใช้</label>
+            <label style={styles.label}>👤 Username</label>
             <input
-              type="text"
               name="username"
               value={form.username}
               onChange={handleChange}
-              placeholder="ชื่อผู้ใช้"
-              style={style.input}
+              style={styles.input}
               required
             />
           </div>
+
           <div>
-            <label style={style.label}>🔒 รหัสผ่าน</label>
+            <label style={styles.label}>🔒 Password (ถ้าต้องการเปลี่ยน)</label>
             <input
               type="password"
               name="password"
               value={form.password}
               onChange={handleChange}
-              placeholder="รหัสผ่าน"
-              style={style.input}
-              required
+              style={styles.input}
             />
           </div>
+
           <div>
-            <label style={style.label}>คำนำหน้า</label>
+            <label style={styles.label}>คำนำหน้า</label>
             <select
-              name="prefix"
-              value={form.prefix}
+              name="firstname"
+              value={form.firstname}
               onChange={handleChange}
-              style={style.input}
-              required
+              style={styles.input}
             >
               <option value="">-- เลือก --</option>
               <option value="นาย">นาย</option>
@@ -280,112 +141,105 @@ export default function Register({ params }) {
               <option value="นางสาว">นางสาว</option>
             </select>
           </div>
+
           <div>
-            <label style={style.label}>🎂 วันเกิด</label>
+            <label style={styles.label}>ชื่อ</label>
             <input
-              type="date"
-              name="birthdate"
-              value={form.birthdate}
+              name="fullname"
+              value={form.fullname}
               onChange={handleChange}
-              style={style.input}
+              style={styles.input}
               required
             />
           </div>
+
           <div>
-            <label style={style.label}>ชื่อ</label>
+            <label style={styles.label}>นามสกุล</label>
             <input
-              type="text"
-              name="firstName"
-              value={form.firstName}
+              name="lastname"
+              value={form.lastname}
               onChange={handleChange}
-              placeholder="ชื่อจริง"
-              style={style.input}
+              style={styles.input}
               required
             />
           </div>
+
           <div>
-            <label style={style.label}>นามสกุล</label>
-            <input
-              type="text"
-              name="lastName"
-              value={form.lastName}
+            <label style={styles.label}>สถานะ</label>
+            <select
+              name="status"
+              value={form.status}
               onChange={handleChange}
-              placeholder="นามสกุล"
-              style={style.input}
-              required
-            />
+              style={styles.input}
+            >
+              <option value="user">user</option>
+              <option value="admin">admin</option>
+            </select>
           </div>
         </div>
 
-        <div style={{ marginTop: '1.5rem' }}>
-          <label style={style.label}>🏠 ที่อยู่</label>
-          <textarea
-            name="address"
-            value={form.address}
-            onChange={handleChange}
-            rows="3"
-            placeholder="บ้านเลขที่ / แขวง / เขต / จังหวัด"
-            style={style.textarea}
-            required
-          />
-        </div>
-
-        <div style={{ marginTop: '1.5rem' }}>
-          <label style={style.label}>เพศ</label>
-          <div style={style.radioContainer}>
-            <label style={style.radioLabel}>
-              <input
-                type="radio"
-                name="gender"
-                value="ชาย"
-                checked={form.gender === 'ชาย'}
-                onChange={handleChange}
-                style={{ marginRight: '0.5rem' }}
-              />
-              ชาย
-            </label>
-            <label style={style.radioLabel}>
-              <input
-                type="radio"
-                name="gender"
-                value="หญิง"
-                checked={form.gender === 'หญิง'}
-                onChange={handleChange}
-                style={{ marginRight: '0.5rem' }}
-              />
-              หญิง
-            </label>
-          </div>
-        </div>
-
-        <div style={style.checkboxContainer}>
-          <input
-            type="checkbox"
-            name="accepted"
-            checked={form.accepted}
-            onChange={handleChange}
-            style={style.checkbox}
-            required
-          />
-          <label style={{ fontSize: '0.875rem', color: '#374151' }}>
-            ฉันยอมรับเงื่อนไขและข้อตกลง
-          </label>
-        </div>
-
-        <button
-          type="submit"
-          style={{
-            ...style.submitButton,
-            ...(btnHover && !isSubmitDisabled ? style.submitButtonHover : {}),
-            ...(isSubmitDisabled ? style.submitButtonDisabled : {}),
-          }}
-          onMouseEnter={() => setBtnHover(true)}
-          onMouseLeave={() => setBtnHover(false)}
-          disabled={isSubmitDisabled}
-        >
-          {isEditMode ? 'บันทึกการแก้ไข' : 'สมัครสมาชิก'}
+        <button type="submit" style={styles.submitButton}>
+          💾 บันทึกการแก้ไข
         </button>
       </form>
     </div>
   );
 }
+
+const styles = {
+  container: {
+    minHeight: '100vh',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    background: 'linear-gradient(to right, #34d399, #6ee7b7, #a7f3d0)',
+  },
+  form: {
+    backgroundColor: 'white',
+    width: '100%',
+    maxWidth: '600px',
+    padding: '2rem',
+    borderRadius: '1.5rem',
+    boxShadow: '0 10px 25px rgba(0,0,0,0.1)',
+  },
+  heading: {
+    textAlign: 'center',
+    fontSize: '2rem',
+    fontWeight: '800',
+    color: '#065f46',
+    marginBottom: '0.5rem',
+  },
+  subtitle: {
+    textAlign: 'center',
+    color: '#166534',
+    marginBottom: '1.5rem',
+  },
+  gridContainer: {
+    display: 'grid',
+    gap: '1rem',
+    gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+  },
+  label: {
+    fontWeight: '600',
+    fontSize: '0.875rem',
+    color: '#14532d',
+  },
+  input: {
+    width: '100%',
+    padding: '0.5rem 0.75rem',
+    borderRadius: '0.5rem',
+    border: '1px solid #d1d5db',
+  },
+  submitButton: {
+    marginTop: '1.5rem',
+    width: '100%',
+    padding: '0.75rem',
+    borderRadius: '0.75rem',
+    border: 'none',
+    background: 'linear-gradient(to right, #059669, #10b981)',
+    color: 'white',
+    fontWeight: 'bold',
+    fontSize: '1rem',
+    cursor: 'pointer',
+  },
+};

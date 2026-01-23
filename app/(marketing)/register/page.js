@@ -2,7 +2,10 @@
 
 import { useState } from 'react';
 import Swal from 'sweetalert2';
-import { useRouter } from 'next/navigation'; // ✅ import router
+import { useRouter } from 'next/navigation';
+
+const API_URL = "https://back-end-dusky-three.vercel.app"; 
+// const API_URL = "https://YOUR_BACKEND.vercel.app"; // ตอน deploy
 
 const style = {
   container: {
@@ -28,7 +31,6 @@ const style = {
     textAlign: 'center',
     color: '#065f46',
     marginBottom: '0.75rem',
-    textShadow: '0 1px 2px rgba(0,0,0,0.1)',
   },
   subtitle: {
     textAlign: 'center',
@@ -56,27 +58,6 @@ const style = {
     fontSize: '1rem',
     outline: 'none',
   },
-  textarea: {
-    width: '100%',
-    padding: '0.5rem 1rem',
-    border: '1px solid #d1d5db',
-    borderRadius: '0.5rem',
-    fontSize: '1rem',
-    outline: 'none',
-    resize: 'vertical',
-  },
-  radioContainer: {
-    display: 'flex',
-    gap: '1.5rem',
-    marginTop: '0.25rem',
-  },
-  radioLabel: {
-    display: 'flex',
-    alignItems: 'center',
-    fontSize: '0.875rem',
-    color: '#4b5563',
-    cursor: 'pointer',
-  },
   checkboxContainer: {
     marginTop: '1.5rem',
     display: 'flex',
@@ -96,37 +77,29 @@ const style = {
     fontWeight: 'bold',
     fontSize: '1.125rem',
     borderRadius: '1rem',
-    boxShadow: '0 10px 15px -3px rgba(16, 185, 129, 0.7)',
     cursor: 'pointer',
     border: 'none',
-  },
-  submitButtonHover: {
-    opacity: 0.9,
-    boxShadow: '0 12px 20px -5px rgba(16, 185, 129, 0.9)',
   },
   submitButtonDisabled: {
     background: '#6ee7b7',
     cursor: 'not-allowed',
-    boxShadow: 'none',
     opacity: 0.6,
   },
 };
 
 export default function Register() {
+  const router = useRouter();
+
   const [form, setForm] = useState({
     username: '',
     password: '',
     prefix: '',
-    firstName: '',
-    lastName: '',
-    address: '',
-    gender: '',
-    birthdate: '',
+    firstname: '',
+    lastname: '',
     accepted: false,
   });
 
-  const [btnHover, setBtnHover] = useState(false);
-  const router = useRouter();
+  const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -138,21 +111,35 @@ export default function Register() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!form.accepted) return;
+
+    // ✅ validate
+    if (!form.username || !form.password || !form.firstname || !form.lastname) {
+      return Swal.fire({
+        icon: 'warning',
+        title: 'กรุณากรอกข้อมูลให้ครบ',
+      });
+    }
+
+    if (!form.accepted) {
+      return Swal.fire({
+        icon: 'warning',
+        title: 'กรุณายอมรับเงื่อนไข',
+      });
+    }
 
     const payload = {
-      firstname: form.prefix,
-      fullname: form.firstName,
-      lastname: form.lastName,
+      firstname: form.prefix,                // คำนำหน้า
+      fullname: form.firstname,              // ชื่อ
+      lastname: form.lastname,               // นามสกุล
       username: form.username,
       password: form.password,
-      address: form.address,
-      sex: form.gender,
-      birthday: form.birthdate,
+      status: "user",
     };
 
     try {
-      const res = await fetch('https://backend-nextjs-virid.vercel.app/api/users', {
+      setLoading(true);
+
+      const res = await fetch(`${API_URL}/api/users`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
@@ -160,66 +147,61 @@ export default function Register() {
 
       const data = await res.json();
 
-      if (res.ok) {
-        Swal.fire({
-          icon: 'success',
-          title: 'สมัครสมาชิกสำเร็จ',
-          text: 'คุณสามารถเข้าสู่ระบบได้แล้ว',
-          timer: 2000,
-          showConfirmButton: false,
-        }).then(() => {
-          router.push('/login'); // ✅ redirect auto
-        });
-
-        setForm({
-          username: '',
-          password: '',
-          prefix: '',
-          firstName: '',
-          lastName: '',
-          address: '',
-          gender: '',
-          birthdate: '',
-          accepted: false,
-        });
-      } else {
-        Swal.fire({
-          icon: 'error',
-          title: 'เกิดข้อผิดพลาด',
-          text: data.message || 'ไม่สามารถสมัครสมาชิกได้',
-        });
+      if (!res.ok) {
+        throw new Error(data.error || data.message || "Register failed");
       }
+
+      Swal.fire({
+        icon: 'success',
+        title: 'สมัครสมาชิกสำเร็จ 🎉',
+        text: 'คุณสามารถเข้าสู่ระบบได้แล้ว',
+        timer: 1500,
+        showConfirmButton: false,
+      }).then(() => router.push('/login'));
+
+      // reset form
+      setForm({
+        username: '',
+        password: '',
+        prefix: '',
+        firstname: '',
+        lastname: '',
+        accepted: false,
+      });
+
     } catch (error) {
       Swal.fire({
         icon: 'error',
-        title: 'ข้อผิดพลาดเครือข่าย',
-        text: 'ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์ได้',
+        title: 'สมัครสมาชิกไม่สำเร็จ ❌',
+        text: error.message,
       });
+    } finally {
+      setLoading(false);
     }
   };
 
-  const isSubmitDisabled = !form.accepted;
+  const isDisabled = !form.accepted || loading;
 
   return (
     <div style={style.container}>
       <form onSubmit={handleSubmit} style={style.form}>
         <h1 style={style.heading}>สมัครสมาชิก</h1>
-        <p style={style.subtitle}>กรอกข้อมูลให้ครบถ้วนเพื่อสร้างบัญชีของคุณ</p>
+        <p style={style.subtitle}>กรอกข้อมูลเพื่อสร้างบัญชีใหม่</p>
 
         <div style={style.gridContainer}>
           <div>
-            <label htmlFor="username" style={style.label}>👤 ชื่อผู้ใช้</label>
-            <input id="username" name="username" type="text" value={form.username} onChange={handleChange} style={style.input} required />
+            <label style={style.label}>👤 Username</label>
+            <input name="username" value={form.username} onChange={handleChange} style={style.input} />
           </div>
 
           <div>
-            <label htmlFor="password" style={style.label}>🔒 รหัสผ่าน</label>
-            <input id="password" name="password" type="password" value={form.password} onChange={handleChange} style={style.input} required />
+            <label style={style.label}>🔒 Password</label>
+            <input type="password" name="password" value={form.password} onChange={handleChange} style={style.input} />
           </div>
 
           <div>
-            <label htmlFor="prefix" style={style.label}>คำนำหน้า</label>
-            <select id="prefix" name="prefix" value={form.prefix} onChange={handleChange} style={style.input} required>
+            <label style={style.label}>คำนำหน้า</label>
+            <select name="prefix" value={form.prefix} onChange={handleChange} style={style.input}>
               <option value="">-- เลือก --</option>
               <option value="นาย">นาย</option>
               <option value="นาง">นาง</option>
@@ -228,57 +210,30 @@ export default function Register() {
           </div>
 
           <div>
-            <label htmlFor="birthdate" style={style.label}>🎂 วันเกิด</label>
-            <input id="birthdate" name="birthdate" type="date" value={form.birthdate} onChange={handleChange} style={style.input} required />
+            <label style={style.label}>ชื่อ</label>
+            <input name="firstname" value={form.firstname} onChange={handleChange} style={style.input} />
           </div>
 
           <div>
-            <label htmlFor="firstName" style={style.label}>ชื่อ</label>
-            <input id="firstName" name="firstName" type="text" value={form.firstName} onChange={handleChange} style={style.input} required />
-          </div>
-
-          <div>
-            <label htmlFor="lastName" style={style.label}>นามสกุล</label>
-            <input id="lastName" name="lastName" type="text" value={form.lastName} onChange={handleChange} style={style.input} required />
-          </div>
-        </div>
-
-        <div style={{ marginTop: '1.5rem' }}>
-          <label htmlFor="address" style={style.label}>🏠 ที่อยู่</label>
-          <textarea id="address" name="address" rows="3" value={form.address} onChange={handleChange} style={style.textarea} required />
-        </div>
-
-        <div style={{ marginTop: '1.5rem' }}>
-          <label style={style.label}>เพศ</label>
-          <div style={style.radioContainer}>
-            <label style={style.radioLabel}>
-              <input type="radio" name="gender" value="ชาย" checked={form.gender === 'ชาย'} onChange={handleChange} style={{ marginRight: '0.5rem' }} required />
-              ชาย
-            </label>
-            <label style={style.radioLabel}>
-              <input type="radio" name="gender" value="หญิง" checked={form.gender === 'หญิง'} onChange={handleChange} style={{ marginRight: '0.5rem' }} />
-              หญิง
-            </label>
+            <label style={style.label}>นามสกุล</label>
+            <input name="lastname" value={form.lastname} onChange={handleChange} style={style.input} />
           </div>
         </div>
 
         <div style={style.checkboxContainer}>
-          <input type="checkbox" name="accepted" checked={form.accepted} onChange={handleChange} style={style.checkbox} required />
-          <label style={{ fontSize: '0.875rem', color: '#374151' }}>ฉันยอมรับเงื่อนไขและข้อตกลง</label>
+          <input type="checkbox" name="accepted" checked={form.accepted} onChange={handleChange} style={style.checkbox} />
+          <label>ฉันยอมรับเงื่อนไขและข้อตกลง</label>
         </div>
 
         <button
           type="submit"
           style={{
             ...style.submitButton,
-            ...(btnHover && !isSubmitDisabled ? style.submitButtonHover : {}),
-            ...(isSubmitDisabled ? style.submitButtonDisabled : {}),
+            ...(isDisabled ? style.submitButtonDisabled : {}),
           }}
-          onMouseEnter={() => setBtnHover(true)}
-          onMouseLeave={() => setBtnHover(false)}
-          disabled={isSubmitDisabled}
+          disabled={isDisabled}
         >
-          สมัครสมาชิก
+          {loading ? "กำลังสมัคร..." : "สมัครสมาชิก"}
         </button>
       </form>
     </div>
